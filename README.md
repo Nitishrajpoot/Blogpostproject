@@ -48,7 +48,15 @@ Seed an admin user (optional):
 ```bash
 npm run seed:admin
 ```
-Default admin creds: `admin@example.com` / `admin12345`
+
+**Admin credentials** (set in `.env`):
+| Variable         | Default Value       |
+| ---------------- | ------------------- |
+| `ADMIN_EMAIL`    | `admin@example.com` |
+| `ADMIN_PASSWORD` | `admin12345`        |
+| `ADMIN_NAME`     | `Admin`             |
+
+Login with: **`admin@example.com`** / **`admin12345`**
 
 ### 2) Frontend
 
