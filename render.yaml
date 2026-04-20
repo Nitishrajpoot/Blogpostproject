@@ -1,0 +1,22 @@
+# Render Blueprint – deploys the Express backend as a Web Service
+# https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: blog-platform-api
+    runtime: node
+    region: oregon
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false          # you must set this manually in the Render dashboard
+      - key: JWT_SECRET
+        generateValue: true  # Render generates a random 64-char string
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: CORS_ORIGIN
+        sync: false          # set to your Vercel frontend URL after deploying
