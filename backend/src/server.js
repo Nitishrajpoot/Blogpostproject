@@ -20,6 +20,10 @@ async function main() {
   const app = express();
   const isProd = env.NODE_ENV === "production";
 
+  // Normalize: strip trailing slashes for comparison
+  const normalizedCorsOrigins = corsOrigins.map((o) => o.replace(/\/+$/, ""));
+  console.log("Allowed CORS origins:", normalizedCorsOrigins);
+
   app.use(
     cors({
       origin(origin, cb) {
@@ -28,7 +32,16 @@ async function main() {
         // dev-friendly: allow any localhost port (dev only)
         if (!isProd && /^http:\/\/localhost:\d+$/.test(origin)) return cb(null, true);
         if (!isProd && /^http:\/\/127\.0\.0\.1:\d+$/.test(origin)) return cb(null, true);
-        if (corsOrigins.includes(origin)) return cb(null, true);
+
+        const clean = origin.replace(/\/+$/, "");
+        // check explicit allow-list
+        if (normalizedCorsOrigins.includes(clean)) return cb(null, true);
+        // allow known deployment platforms (netlify, vercel, render)
+        if (/\.netlify\.app$/.test(clean)) return cb(null, true);
+        if (/\.vercel\.app$/.test(clean)) return cb(null, true);
+        if (/\.onrender\.com$/.test(clean)) return cb(null, true);
+
+        console.error(`CORS blocked origin: "${origin}" | Allowed: ${normalizedCorsOrigins.join(", ")}`);
         return cb(new Error("Not allowed by CORS"));
       },
       credentials: true,
